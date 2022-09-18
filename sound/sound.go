@@ -130,9 +130,9 @@ func play(context *oto.Context, freq float64, duration time.Duration) oto.Player
 func run() error {
 
 	const (
-		freqC = 523.3
-		freqE = 659.3
-		freqG = 784.0
+		freqC = 261.6
+		freqD = 293.7
+		freqE = 329.6
 	)
 
 	c, ready, err := oto.NewContext(*sampleRate, *channelCount, *bitDepthInBytes)
@@ -149,6 +149,17 @@ func run() error {
 	go func() {
 		defer wg.Done()
 		p := play(c, freqC, 3*time.Second)
+		m.Lock()
+		players = append(players, p)
+		m.Unlock()
+		time.Sleep(3 * time.Second)
+	}()
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		time.Sleep(1 * time.Second)
+		p := play(c, freqD, 3*time.Second)
 		m.Lock()
 		players = append(players, p)
 		m.Unlock()
